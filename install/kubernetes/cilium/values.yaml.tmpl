@@ -975,6 +975,19 @@ gatewayAPI:
 # properly. See documentation for details on when this can be disabled:
 # https://docs.cilium.io/en/stable/operations/system_requirements/#linux-kernel.
 enableXTSocketFallback: true
+
+# -- Skip Cilium's kernel module validation. By default, this isn't required,
+# as Cilium can detect built-in modules from /lib/modules/, and will not even
+# try to load them if not needed. If they are not loaded but needed and Cilium
+# has sufficient capabilities to load missing modules, it will load them
+# automatically. However, in some restricted environments, this doesn't work.
+# For example, in container-optimized operating systems like Talos Linux.
+#
+# Only enable this flag if all required kernel modules are completely loaded on
+# the underlying OS! Enabling this allows Cilium to run without the Linux
+# capability SYS_MODULE.
+skipKernelModuleValidation: false
+
 encryption:
   # -- Enable transparent network encryption.
   enabled: false
