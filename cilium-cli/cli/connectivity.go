@@ -75,6 +75,20 @@ func RunE(hooks api.Hooks) func(cmd *cobra.Command, args []string) error {
 			}
 		}
 
+		if params.PrintImageArtifacts {
+			if cmd.Use == "test" {
+				fmt.Println(params.CurlImage)
+				fmt.Println(params.JSONMockImage)
+				fmt.Println(params.DNSTestServerImage)
+				fmt.Println(params.TestConnDisruptImage)
+				fmt.Println(params.FRRImage)
+				fmt.Println(params.SocatImage)
+			} else if cmd.Use == "perf" {
+				fmt.Println(params.PerfParameters.Image)
+			}
+			return nil
+		}
+
 		logger := check.NewConcurrentLogger(params.Writer, params.TestConcurrency)
 
 		connTests, err := newConnectivityTests(params, hooks, logger)
@@ -240,6 +254,7 @@ func registerCommonFlags(flags *pflag.FlagSet) {
 	flags.Var(option.NewNamedMapOptions("node-selector", &params.NodeSelector, nil), "node-selector", "Restrict connectivity pods to nodes matching this label")
 	flags.StringVar(&params.TestNamespace, "test-namespace", defaults.ConnectivityCheckNamespace, "Namespace to perform the connectivity in (always suffixed with a sequence number to be compliant with test-concurrency param, e.g.: cilium-test-1)")
 	flags.Var(&params.DeploymentAnnotations, "deployment-pod-annotations", "Add annotations to the connectivity pods, e.g. '{\"client\":{\"foo\":\"bar\"}}'")
+	flags.BoolVar(&params.PrintImageArtifacts, "print-image-artifacts", false, "Prints the used image artifacts")
 }
 
 func newConnectivityTests(
